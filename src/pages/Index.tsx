@@ -2,20 +2,29 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import ColorInput from "@/components/ColorInput";
 import RecommendationDisplay from "@/components/RecommendationDisplay";
+import OccasionSelector from "@/components/OccasionSelector";
 import heroImage from "@/assets/hero-fashion.jpg";
 
 const Index = () => {
   const [upperColor, setUpperColor] = useState("");
   const [lowerColor, setLowerColor] = useState("");
   const [shoeColor, setShoeColor] = useState("");
+  const [occasion, setOccasion] = useState("");
+  const [upperImage, setUpperImage] = useState<string | null>(null);
+  const [lowerImage, setLowerImage] = useState<string | null>(null);
+  const [shoeImage, setShoeImage] = useState<string | null>(null);
 
   const handleReset = () => {
     setUpperColor("");
     setLowerColor("");
     setShoeColor("");
+    setOccasion("");
+    setUpperImage(null);
+    setLowerImage(null);
+    setShoeImage(null);
   };
 
-  const hasAnyColor = upperColor || lowerColor || shoeColor;
+  const hasAnyInput = upperColor || lowerColor || shoeColor || occasion || upperImage || lowerImage || shoeImage;
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,8 +42,8 @@ const Index = () => {
               Clazzy
             </h1>
             <p className="text-xl md:text-2xl text-white/90 font-light max-w-2xl mx-auto leading-relaxed">
-              Discover perfect color combinations for your wardrobe. 
-              Let AI help you create stunning outfits that turn heads.
+              Get personalized outfit recommendations based on occasion, colors, and your actual clothing items.
+              Upload photos or select colors to create perfect combinations.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
               <Button variant="hero" size="lg" className="min-w-48">
@@ -53,20 +62,30 @@ const Index = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 fashion-gradient bg-clip-text text-transparent">
-              Your Style Assistant
+              Your Personal Style Assistant
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Select the colors of your clothing items and get personalized style recommendations
+              Choose your occasion, upload clothing images or select colors for AI-powered outfit recommendations
             </p>
           </div>
 
-          {/* Color Input Section */}
+          {/* Occasion Selector */}
+          <div className="mb-12">
+            <OccasionSelector
+              selectedOccasion={occasion}
+              onOccasionChange={setOccasion}
+            />
+          </div>
+
+          {/* Clothing Input Section */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <ColorInput
               title="Upper Wear"
               icon="👕"
               selectedColor={upperColor}
               onColorChange={setUpperColor}
+              selectedImage={upperImage || undefined}
+              onImageChange={setUpperImage}
               placeholder="Shirt, t-shirt, blouse..."
             />
             <ColorInput
@@ -74,6 +93,8 @@ const Index = () => {
               icon="👖"
               selectedColor={lowerColor}
               onColorChange={setLowerColor}
+              selectedImage={lowerImage || undefined}
+              onImageChange={setLowerImage}
               placeholder="Pants, jeans, skirt..."
             />
             <ColorInput
@@ -81,15 +102,17 @@ const Index = () => {
               icon="👟"
               selectedColor={shoeColor}
               onColorChange={setShoeColor}
+              selectedImage={shoeImage || undefined}
+              onImageChange={setShoeImage}
               placeholder="Shoes, sneakers, boots..."
             />
           </div>
 
           {/* Action Buttons */}
-          {hasAnyColor && (
+          {hasAnyInput && (
             <div className="flex justify-center gap-4 mb-12">
               <Button variant="fashion" size="lg" onClick={handleReset}>
-                Reset Colors
+                Reset All
               </Button>
               <Button variant="secondary" size="lg">
                 Save Combination
@@ -102,6 +125,10 @@ const Index = () => {
             upperColor={upperColor}
             lowerColor={lowerColor}
             shoeColor={shoeColor}
+            occasion={occasion}
+            upperImage={upperImage || undefined}
+            lowerImage={lowerImage || undefined}
+            shoeImage={shoeImage || undefined}
           />
         </div>
       </section>

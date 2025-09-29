@@ -5,37 +5,88 @@ interface RecommendationDisplayProps {
   upperColor: string;
   lowerColor: string;
   shoeColor: string;
+  occasion: string;
+  upperImage?: string;
+  lowerImage?: string;
+  shoeImage?: string;
 }
 
-const RecommendationDisplay = ({ upperColor, lowerColor, shoeColor }: RecommendationDisplayProps) => {
+const RecommendationDisplay = ({ upperColor, lowerColor, shoeColor, occasion, upperImage, lowerImage, shoeImage }: RecommendationDisplayProps) => {
+  const getOccasionInfo = () => {
+    const occasions = {
+      outing: { name: "Casual Outing", style: "relaxed and comfortable" },
+      dating: { name: "Date Night", style: "romantic and elegant" },
+      function: { name: "Formal Function", style: "professional and sophisticated" },
+      movie: { name: "Movie Night", style: "cozy and comfortable" }
+    };
+    return occasions[occasion as keyof typeof occasions] || { name: "General", style: "versatile" };
+  };
+
   const generateRecommendations = () => {
     const recommendations = [];
+    const occasionInfo = getOccasionInfo();
     
     // Basic color theory recommendations
     if (upperColor && lowerColor && shoeColor) {
       recommendations.push({
-        title: "Current Combination",
-        description: "Your selected colors",
+        title: `Current ${occasionInfo.name} Look`,
+        description: `Your selected colors for a ${occasionInfo.style} occasion`,
         rating: "Personal Choice",
-        colors: { upper: upperColor, lower: lowerColor, shoe: shoeColor }
+        colors: { upper: upperColor, lower: lowerColor, shoe: shoeColor },
+        images: { upper: upperImage, lower: lowerImage, shoe: shoeImage }
       });
       
-      // Complementary suggestions
-      recommendations.push({
-        title: "Neutral Balance",
-        description: "Safe and elegant combination",
-        rating: "Recommended",
-        colors: { 
-          upper: upperColor, 
-          lower: "#2C2C2C", 
-          shoe: "#000000" 
-        }
-      });
+      // Occasion-specific suggestions
+      if (occasion === "dating") {
+        recommendations.push({
+          title: "Romantic Elegance",
+          description: "Perfect for making a memorable impression",
+          rating: "Date Perfect",
+          colors: { 
+            upper: upperColor, 
+            lower: "#2C2C2C", 
+            shoe: "#8B4513" 
+          }
+        });
+      } else if (occasion === "function") {
+        recommendations.push({
+          title: "Professional Polish",
+          description: "Sophisticated and business-appropriate",
+          rating: "Meeting Ready",
+          colors: { 
+            upper: upperColor, 
+            lower: "#1F2937", 
+            shoe: "#000000" 
+          }
+        });
+      } else if (occasion === "outing") {
+        recommendations.push({
+          title: "Casual Cool",
+          description: "Relaxed yet put-together style",
+          rating: "Day Perfect",
+          colors: { 
+            upper: upperColor, 
+            lower: "#4A5568", 
+            shoe: "#FFFFFF" 
+          }
+        });
+      } else if (occasion === "movie") {
+        recommendations.push({
+          title: "Cozy Comfort",
+          description: "Comfortable for long movie sessions",
+          rating: "Comfort First",
+          colors: { 
+            upper: upperColor, 
+            lower: "#2D3748", 
+            shoe: "#718096" 
+          }
+        });
+      }
       
       recommendations.push({
-        title: "Monochromatic",
+        title: "Monochromatic Style",
         description: "Sophisticated single-color palette",
-        rating: "Stylish",
+        rating: "Always Chic",
         colors: { 
           upper: upperColor, 
           lower: adjustBrightness(upperColor, -20), 
@@ -59,27 +110,36 @@ const RecommendationDisplay = ({ upperColor, lowerColor, shoeColor }: Recommenda
 
   const recommendations = generateRecommendations();
 
-  if (!upperColor && !lowerColor && !shoeColor) {
+  if (!upperColor && !lowerColor && !shoeColor && !occasion) {
     return (
       <Card className="p-8 text-center card-gradient">
         <div className="space-y-4">
           <div className="text-6xl">👗</div>
           <h3 className="text-xl font-semibold text-muted-foreground">
-            Select your clothing colors to get personalized recommendations
+            Select your occasion and clothing details
           </h3>
           <p className="text-muted-foreground">
-            Choose colors for your upper wear, lower wear, and shoes to see amazing style combinations!
+            Choose an occasion, add colors or images for your clothing items to get personalized style recommendations!
           </p>
         </div>
       </Card>
     );
   }
 
+  const occasionInfo = getOccasionInfo();
+
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-center fashion-gradient bg-clip-text text-transparent">
-        Your Style Recommendations
-      </h2>
+      <div className="text-center space-y-2">
+        <h2 className="text-2xl font-bold fashion-gradient bg-clip-text text-transparent">
+          Your {occasionInfo.name} Style Recommendations
+        </h2>
+        {occasion && (
+          <p className="text-muted-foreground">
+            Curated for a {occasionInfo.style} occasion
+          </p>
+        )}
+      </div>
       
       <div className="grid gap-4">
         {recommendations.map((rec, index) => (
@@ -96,28 +156,70 @@ const RecommendationDisplay = ({ upperColor, lowerColor, shoeColor }: Recommenda
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center space-y-2">
                 <div className="text-sm font-medium">Upper</div>
-                <div
-                  className="w-full h-12 rounded-lg border-2 border-border"
-                  style={{ backgroundColor: rec.colors.upper }}
-                />
+                {rec.images?.upper ? (
+                  <div className="relative">
+                    <img
+                      src={rec.images.upper}
+                      alt="Upper wear"
+                      className="w-full h-20 object-cover rounded-lg border-2 border-border"
+                    />
+                    <div 
+                      className="absolute inset-0 rounded-lg border-2 border-border opacity-30"
+                      style={{ backgroundColor: rec.colors.upper }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="w-full h-12 rounded-lg border-2 border-border"
+                    style={{ backgroundColor: rec.colors.upper }}
+                  />
+                )}
                 <div className="text-xs text-muted-foreground">👕</div>
               </div>
               
               <div className="text-center space-y-2">
                 <div className="text-sm font-medium">Lower</div>
-                <div
-                  className="w-full h-12 rounded-lg border-2 border-border"
-                  style={{ backgroundColor: rec.colors.lower }}
-                />
+                {rec.images?.lower ? (
+                  <div className="relative">
+                    <img
+                      src={rec.images.lower}
+                      alt="Lower wear"
+                      className="w-full h-20 object-cover rounded-lg border-2 border-border"
+                    />
+                    <div 
+                      className="absolute inset-0 rounded-lg border-2 border-border opacity-30"
+                      style={{ backgroundColor: rec.colors.lower }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="w-full h-12 rounded-lg border-2 border-border"
+                    style={{ backgroundColor: rec.colors.lower }}
+                  />
+                )}
                 <div className="text-xs text-muted-foreground">👖</div>
               </div>
               
               <div className="text-center space-y-2">
                 <div className="text-sm font-medium">Shoes</div>
-                <div
-                  className="w-full h-12 rounded-lg border-2 border-border"
-                  style={{ backgroundColor: rec.colors.shoe }}
-                />
+                {rec.images?.shoe ? (
+                  <div className="relative">
+                    <img
+                      src={rec.images.shoe}
+                      alt="Footwear"
+                      className="w-full h-20 object-cover rounded-lg border-2 border-border"
+                    />
+                    <div 
+                      className="absolute inset-0 rounded-lg border-2 border-border opacity-30"
+                      style={{ backgroundColor: rec.colors.shoe }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="w-full h-12 rounded-lg border-2 border-border"
+                    style={{ backgroundColor: rec.colors.shoe }}
+                  />
+                )}
                 <div className="text-xs text-muted-foreground">👟</div>
               </div>
             </div>
