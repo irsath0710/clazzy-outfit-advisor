@@ -21,7 +21,14 @@ export default {
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
+          light: "hsl(var(--primary-light))",
+          dark: "hsl(var(--primary-dark))",
           foreground: "hsl(var(--primary-foreground))",
+        },
+        fashion: {
+          rose: "hsl(var(--accent-rose))",
+          lavender: "hsl(var(--accent-lavender))",
+          coral: "hsl(var(--accent-coral))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
